@@ -1,0 +1,132 @@
+﻿
+@model test2MVC.Models.GroupQueryTiming
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index2</h2>
+
+
+
+@*----------------СТРОИМ CHART----------------------------------------------------------*@
+
+@*<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script> альтернатива нижней строчки*@
+<script src="~/Scripts/Chart.js"></script>
+<div class="row">
+    <div class="col-md-12">
+        <canvas id="myChart" width="400" height="100"></canvas>
+        <div id="legendChart" class="chart-legend"></div>
+    </div>
+</div>
+@section Scripts {
+    <script type="text/javascript">
+        var datachart = {
+            labels: [],
+            datasets: [
+                {
+                    label: "Min",
+                    backgroundColor: "rgba(215,220,67,0.3)",
+                    borderColor: "rgba(220,220,220,0.7)",
+                    borderWidth: 1,
+                    hoverBackgroundColor: "rgba(220,220,220,1)",
+                    hoverBorderColor: "rgba(220,220,220,0.5)",
+                    data: []
+                },
+                {
+                    label: "Max",
+                    backgroundColor: "rgba(90,193,208,0.3)",
+                    borderColor: "rgba(151,187,205,0.7)",
+                    borderWidth: 1,
+                    hoverBackgroundColor: "rgba(151,187,205,1)",
+                    hoverBorderColor: "rgba(151,187,205,0.5)",
+                    data: []
+                }
+            ]
+        };
+
+        $.getJSON("/Timings/GetData/", function (data) {
+            $.each(data, function (i, item) {
+                datachart.labels.push(item.UrlValue);
+                datachart.datasets[0].data.push(item.MinValue);
+                datachart.datasets[1].data.push(item.MaxValue);
+
+            })
+            var ctx = document.getElementById("myChart").getContext("2d");
+
+            var myBarChart = new Chart(ctx,
+                {
+                    type: 'horizontalBar',
+                    data: datachart,
+                    options: {}
+                });
+        });
+
+    </script>
+
+}
+
+@*-------------------------------------------------------------------------------------*@
+<p>
+    @Html.ActionLink("History", "History")
+</p>
+@using (Html.BeginForm("Index"))
+{
+    @*@Html.TextBox("x") - создает элемент input type="text" с атрибутам в соответсвии с настройками*@
+    <label>Type Url</label> @Html.TextBox("Url", "https://www.facebook.com/") <br />
+
+    <input type="submit" name="GetResult" value="Get Result" />
+    
+}
+
+
+
+<table class="table table-bordered">
+    <tr>
+        <th scope="col">URL</th>
+        <th scope="col">Response time</th>
+        <th scope="col">Min</th>
+        <th scope="col">Max</th>
+
+    </tr>
+
+    @foreach (var item in Model.Items)
+    {
+        <tr>
+            <td>
+
+                @Html.DisplayFor(modelItem => item.UrlValue)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Value)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MinValue)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MaxValue)
+            </td>
+
+        </tr>
+    }
+
+</table>
+<p>
+    @Html.Action("Count")
+</p>
+
+
+@*
+        @section Scripts {
+            @*Если не получается вычислить время ответа, то выскакивает сообщение о ошибке
+    @if (ViewBag.Message != null)
+    {
+          <script type="text/javascript">
+                        window.onload = function () {
+                            alert("@ViewBag.Message");
+                        };
+          </script>
+    }
+           }
+
+*@

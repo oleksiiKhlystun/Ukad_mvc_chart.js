@@ -1,0 +1,49 @@
+﻿@model IEnumerable<test2MVC.Models.Timing>
+
+@{
+    ViewBag.Title = "History";
+}
+<h2>History</h2>
+<html>
+<body>
+
+    <div>
+        @Html.ActionLink("Back to List", "Index")
+    </div>
+    <table class="table-bordered">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Url)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Time)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Date)
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Url)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Time)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Date)
+                </td>
+                <td>
+                    @Html.ActionLink("Details", "Details", new { id = item.TimingId }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.TimingId })
+                </td>
+            </tr>
+        }
+
+    </table>
+
+</body>
+</html>
